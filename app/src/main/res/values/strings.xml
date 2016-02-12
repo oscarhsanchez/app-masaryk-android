@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Masaryk2</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="desc"></string>
+
+    <string name="txt_cancel">Cancelar</string>
+    <string name="txt_error">Error</string>
+    <string name="txt_thanks">Gracias</string>
+    <string name="txt_select_option">Selecciona una opción</string>
+
+    <string name="error_email">El correo no tiene un formato correcto</string>
+    <string name="error_password">La contraseña debe tener al menos 6 caracteres.</string>
+    <string name="error_connectivity">No se encontró señal de internet.</string>
+
+    <string name="txt_gps_alert">¡Tu GPS está deshabilitado! ¿Te gustaría activarlo?</string>
+    <string name="txt_gps_continue">Continuar sin GPS</string>
+    <string name="txt_gps_activate">Habilitar GPS</string>
+
+    <string name="bt_tab_bottom_1">Promociones</string>
+    <string name="bt_tab_bottom_2">Locales</string>
+    <string name="bt_tab_bottom_3">Actividades</string>
+    <string name="bt_tab_bottom_4">Perfil</string>
+
+    <string name="bt_close">Cerrar</string>
+
+    <string name="facebook_app_id">1044543635607693</string>
+    <string name="google_app_id">1071278916452</string>
+
+</resources>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="mx.app.masaryk2" >
+
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BATTERY_STATS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+
+    <permission android:name="mx.app.masaryk2.MAPS_RECEIVE" android:protectionLevel="signature" />
+
+    <application
+        android:name=".Masaryk2"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+
+        </activity>
+
+        <activity
+            android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+
+        </activity>
+
+        <activity
+            android:name=".activities.RecoverActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name=".activities.HomeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name=".activities.PromoDetailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name=".activities.StoreDetailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name=".activities.ActivityDetailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:label="@string/app_name" />
+
+        <receiver android:name="com.innoquant.moca.push.MOCAPushReceiver">
+            <intent-filter>
+                <action android:name="com.innoquant.moca.push.ACTION_PUSH_RECEIVE" />
+                <category android:name="mx.app.masaryk2" />
+            </intent-filter>
+        </receiver>
+
+
+        <!-- MOCA SDK configuration -->
+        <meta-data android:name="moca.GCM_SENDER" android:value="\ 1071278916452" />
+        <meta-data android:name="moca.APP_KEY" android:value="-cneowiFQcO73lQTbGg1_Q"/>
+        <meta-data android:name="moca.APP_SECRET" android:value="fncoSSwD7m7l1xerLJ+ULMlg6Gw="/>
+        <meta-data android:name="moca.LOG_LEVEL" android:value="info "/>
+        <meta-data android:name="moca.AUTOMATIC_PUSH_SETUP_ENABLED" android:value="true"/>
+        <meta-data android:name="moca.PROXIMITY_SERVICE_ENABLED" android:value="true" />
+        <meta-data android:name="moca.GEOLOCATION_SERVICE_ENABLED" android:value="true" />
+        <meta-data android:name="moca.BACKGROUND_LOCATION_ENABLED" android:value="true" />
+        <meta-data android:name="moca.DATA_FETCH_INTERVAL_MS" android:value="auto" />
+        <meta-data android:name="moca.EVENT_UPLOAD_INTERVAL_MS" android:value="auto" />
+        <meta-data android:name="moca.MOCA_DRIVER_ENABLED" android:value="true" />
+        <meta-data android:name="moca.CUSTOM_PUSH_ICON" android:resource="@mipmap/ic_launcher" />
+
+        <!-- Others SDK configuration -->
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCdZn35cm2nR6B80ry4NGEWLWUMQEYuF8Y"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+
+    </application>
+
+</manifest>
