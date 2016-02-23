@@ -2,7 +2,6 @@ package mx.app.masaryk2.fragments;
 
 
 import android.animation.ValueAnimator;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +16,21 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -42,10 +43,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import mx.app.masaryk2.R;
-import mx.app.masaryk2.activities.ActivityDetailActivity;
 import mx.app.masaryk2.activities.StoreDetailActivity;
-import mx.app.masaryk2.adapters.StoreAdatpter;
-import mx.app.masaryk2.utils.FragmentInflatorFactory;
+import mx.app.masaryk2.adapters.StoreAdapter;
+import mx.app.masaryk2.utils.Font;
 import mx.app.masaryk2.utils.WebBridge;
 
 
@@ -62,6 +62,9 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
     JSONArray data;
     JSONArray dataFilter;
     EditText txtSearch;
+    Button btCancel;
+    String searchText = "";
+    RelativeLayout rlFilter;
     float hValue = 0.35f;
 
     protected Handler handler = new Handler();
@@ -88,24 +91,48 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        view      = (RelativeLayout)FragmentInflatorFactory.inflatorFor(inflater, this).inflate(R.layout.fragment_store, container, false);
+        view      = (RelativeLayout)inflater.inflate(R.layout.fragment_store, container, false);
         txtTitle  = (TextView)view.findViewById(R.id.txt_title);
         listView  = (ListView)view.findViewById(R.id.list_view);
         txtSearch = (EditText)view.findViewById(R.id.txt_search);
+        btCancel  = (Button)view.findViewById(R.id.bt_cancel);
+        rlFilter  = (RelativeLayout)view.findViewById(R.id.rl_filter);
 
         listView.setOnItemClickListener(this);
 
+        txtSearch.setTypeface(Font.get(getActivity(), "source-sans-regular"));
+        btCancel.setTypeface(Font.get(getActivity(), "source-sans-semibold"));
+
         setTitle("Locales");
 
-        int code = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
-        if (code == ConnectionResult.SUCCESS) {
-
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
+        if (result == ConnectionResult.SUCCESS) {
             ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_view)).getMapAsync(this);
-
-        } else if (code == ConnectionResult.SERVICE_MISSING || code == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED || code == ConnectionResult.SERVICE_DISABLED) {
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(code, getActivity(), 1);
-            dialog.show();
+        } else {
+            if(googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(getActivity(), result, 0).show();
+            }
         }
+
+        btCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtSearch.setText(searchText);
+                txtSearch.clearFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
+
+        view.findViewById(R.id.bt_ar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _ar();
+            }
+        });
 
         KeyboardVisibilityEvent.setEventListener(getActivity(), this);
         view.getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -115,6 +142,11 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
         return view;
 
     }
+
+
+
+    /*----------------*/
+	/* CUSTOM METHODS */
 
     protected void _map() {
 
@@ -129,8 +161,8 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
                 String title        = d.getString("title");
                 String address      = d.getString("address");
                 LatLng latlng       = new LatLng(d.getDouble("lat"), d.getDouble("lng"));
-                //BitmapDescriptor b  = BitmapDescriptorFactory.fromResource(R.mipmap.pin); .icon(b)
-                MarkerOptions m     = new MarkerOptions().position(latlng).title(title).snippet(address);
+                BitmapDescriptor b  = BitmapDescriptorFactory.fromResource(R.drawable.map_pin);
+                MarkerOptions m     = new MarkerOptions().position(latlng).title(title).icon(b).snippet(address);
 
                 mapView.addMarker(m);
                 builder.include(latlng);
@@ -169,7 +201,7 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
             try {
                 data = json.getJSONArray("data");
                 dataFilter = data;
-                StoreAdatpter adapter = new StoreAdatpter(getActivity().getLayoutInflater(), data, getActivity());
+                StoreAdapter adapter = new StoreAdapter(getActivity().getLayoutInflater(), data, getActivity());
                 listView.setAdapter(adapter);
                 _map();
             } catch (JSONException e) {
@@ -203,7 +235,7 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        JSONObject item = null;
+        JSONObject item = new JSONObject();
         try {
             item = data.getJSONObject(position);
         } catch (JSONException e) {
@@ -224,10 +256,14 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
     @Override
     public void onVisibilityChanged(boolean b) {
 
-        float height = view.getHeight() - txtSearch.getHeight() - txtSearch.getY();
-        ValueAnimator vals = ValueAnimator.ofFloat(listView.getHeight(), b ? height: (height * hValue));
+        float height = view.getHeight() - rlFilter.getHeight() - rlFilter.getY();
+        float width  = btCancel.getWidth() + btCancel.getX();
+        searchText   = txtSearch.getText().toString();
 
-        vals.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        ValueAnimator vals1 = ValueAnimator.ofFloat(listView.getHeight(), b ? height : (height * hValue));
+        ValueAnimator vals2 = ValueAnimator.ofFloat(txtSearch.getWidth(), b ? btCancel.getX() - 20 : width);
+
+        vals1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
                 Float value = (Float) animation.getAnimatedValue();
                 listView.getLayoutParams().height = value.intValue();
@@ -235,12 +271,23 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
             }
         });
 
+        vals2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Float value = (Float) animation.getAnimatedValue();
+                txtSearch.getLayoutParams().width = value.intValue();
+                txtSearch.requestLayout();
+            }
+        });
+
         if (!b) {
             _map();
         }
 
-        vals.setDuration(250);
-        vals.start();
+        vals1.setDuration(250);
+        vals2.setDuration(250);
+
+        vals1.start();
+        vals2.start();
 
     }
 
@@ -250,19 +297,23 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
 	/* GLOBAL LAYOUT */
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onGlobalLayout() {
 
-        float height = view.getHeight() - txtSearch.getHeight() - txtSearch.getY();
+        float height = view.getHeight() - rlFilter.getHeight() - rlFilter.getY();
         SupportMapFragment map = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map_view);
+        View viewMap = map.getView();
 
-        RelativeLayout.LayoutParams p1 = (RelativeLayout.LayoutParams)map.getView().getLayoutParams();
-        RelativeLayout.LayoutParams p2 = (RelativeLayout.LayoutParams)listView.getLayoutParams();
+        if (viewMap != null) {
+            RelativeLayout.LayoutParams p1 = (RelativeLayout.LayoutParams) map.getView().getLayoutParams();
+            RelativeLayout.LayoutParams p2 = (RelativeLayout.LayoutParams) listView.getLayoutParams();
 
-        p1.height = (int)Math.round(height * (1-hValue));
-        p2.height = (int)Math.round(height * hValue);
+            p1.height = Math.round(height * (1 - hValue));
+            p2.height = Math.round(height * hValue);
 
-        map.getView().setLayoutParams(p1);
-        listView.setLayoutParams(p2);
+            map.getView().setLayoutParams(p1);
+            listView.setLayoutParams(p2);
+        }
 
         if (Build.VERSION.SDK_INT<16) {
             view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -288,14 +339,14 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
         for (int i=0; i<data.length(); i++) {
             try {
                 String title = data.getJSONObject(i).getString("title").toLowerCase();
-                if (title.contains(s.toString().toString())) {
+                if (title.contains(s.toString())) {
                     dataFilter.put(data.getJSONObject(i));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        StoreAdatpter adapter = new StoreAdatpter(getActivity().getLayoutInflater(), dataFilter, getActivity());
+        StoreAdapter adapter = new StoreAdapter(getActivity().getLayoutInflater(), dataFilter, getActivity());
         listView.setAdapter(adapter);
     }
 
@@ -307,8 +358,6 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         boolean handled = false;
-        Log.e("KEYCODE_ENTER", "" + KeyEvent.KEYCODE_ENTER);
-        Log.e("actionId", "" + actionId);
         if (actionId == KeyEvent.KEYCODE_ENTER) {
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

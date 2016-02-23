@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.facebook.CallbackManager;
@@ -21,18 +23,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import mx.app.masaryk2.R;
+import mx.app.masaryk2.utils.Font;
 import mx.app.masaryk2.utils.User;
 import mx.app.masaryk2.utils.WebBridge;
 
 
-
-/**
- * Created by noisedan on 9/29/15.
- */
 public class LoginActivity extends Activity implements WebBridge.WebBridgeListener, FacebookCallback<LoginResult> {
 
 
@@ -52,12 +49,19 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
         txtEmail    = (EditText)findViewById(R.id.txt_email);
         txtPassword = (EditText)findViewById(R.id.txt_password);
 
+        txtEmail.setTypeface(Font.get(this, "source-sans-regular"));
+        txtPassword.setTypeface(Font.get(this, "source-sans-regular"));
+
+        ((Button)findViewById(R.id.bt_recover)).setTypeface(Font.get(this, "source-sans-semibold"));
+        ((Button)findViewById(R.id.bt_send)).setTypeface(Font.get(this, "source-sans-semibold"));
+        ((Button)findViewById(R.id.bt_register)).setTypeface(Font.get(this, "source-sans-semibold"));
+        ((Button)findViewById(R.id.bt_facebook)).setTypeface(Font.get(this, "source-sans-semibold"));
+
         //txtEmail.setText("daniel.fer@avanna.com.mx");
         //txtPassword.setText("123456");
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         LoginManager.getInstance().registerCallback(callback, this);
-
 
         if (User.logged(this)) {
             _login();
@@ -72,7 +76,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
 
     public void clickSend(View v) {
 
-        ArrayList<String> errors = new ArrayList<String>();
+        ArrayList<String> errors = new ArrayList<>();
         if (!_isEmailValid(txtEmail.getText().toString())) errors.add(getString(R.string.error_email));
         if (txtPassword.getText().length() < 6) errors.add(getString(R.string.error_password));
 
@@ -92,7 +96,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
     public void clickRegister(View v) {
         Intent intent = new Intent(this, RegisterActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, 2);
     }
 
     public void clickFacebook(View v) {
@@ -102,7 +106,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
     public void clickRecover(View v) {
         Intent intent = new Intent(this, RecoverActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, 2);
     }
 
 
@@ -112,7 +116,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
 
     protected void _send() {
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        HashMap<String, Object> params = new HashMap<>();
         params.put("email", txtEmail.getText());
         params.put("password", txtPassword.getText());
 
@@ -121,21 +125,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
     }
 
     protected boolean _isEmailValid(String email) {
-        String regExpn =
-                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
-
-        CharSequence inputStr = email;
-
-        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputStr);
-
-        if(matcher.matches()) return true;
-        else return false;
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     protected void _login() {
@@ -186,7 +176,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
                     e.printStackTrace();
                 }
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, 2);
             }
 
         } else {
@@ -206,7 +196,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
 
     @Override
     public void onSuccess(LoginResult loginResult) {
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        HashMap<String, Object> params = new HashMap<>();
         params.put("token", loginResult.getAccessToken().getToken());
         WebBridge.send("facebook", params, "Enviando", this, this);
     }
@@ -220,6 +210,7 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
     }
 
 
+
 	/*-------------------*/
 	/* OVERRIDE ACTIVITY */
 
@@ -229,15 +220,22 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
         super.onActivityResult(requestCode, resultCode, data);
         callback.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == 1 && resultCode != RESULT_OK) {
+            finish();
+        }
+        /*
         if (requestCode == 1 && resultCode == RESULT_OK) {
             new AlertDialog.Builder(this).setMessage("Su sesión ha sido cerrada").setNeutralButton(R.string.bt_close, null).show();
 
-        } else if (requestCode == 1 && resultCode == 501) {
-            new AlertDialog.Builder(this).setTitle(R.string.txt_error).setMessage("Su sessión expiró, ingrese de nuevo.").setNeutralButton(R.string.bt_close, null).show();
-
-        }  else if (requestCode == 1) {
-            //finish();
+        }  else if (requestCode == 1 && resultCode != RESULT_OK) {
+            finish();
         }
+        */
+        /*
+        else if (requestCode == 1 && resultCode == 501) {
+            new AlertDialog.Builder(this).setTitle(R.string.txt_error).setMessage("Su sessión expiró, ingrese de nuevo.").setNeutralButton(R.string.bt_close, null).show();
+        }
+         */
 
     }
 

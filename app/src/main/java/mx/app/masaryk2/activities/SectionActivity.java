@@ -6,16 +6,11 @@ import android.widget.TextView;
 
 import mx.app.masaryk2.R;
 
-/**
- * Created by noisedan on 9/29/15.
- */
 public class SectionActivity extends FragmentActivity {
 
 
 	/*------------*/
 	/* PROPERTIES */
-
-    TextView txtTitle;
 
     public void setTitle(String t) {
         if (findViewById(R.id.txt_title) != null) {
@@ -30,6 +25,9 @@ public class SectionActivity extends FragmentActivity {
     public void clickBack(View v) {
         finish();
         overridePendingTransition(R.anim.slide_right_from, R.anim.slide_right);
+    }
+
+    public void clickAr(View v) {
     }
 
     @Override

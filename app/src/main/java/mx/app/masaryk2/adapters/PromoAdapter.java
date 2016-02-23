@@ -14,9 +14,6 @@ import mx.app.masaryk2.R;
 import mx.app.masaryk2.views.PromoView;
 
 
-/**
- * Created by noisedan on 2/6/16.
- */
 public class PromoAdapter extends RecyclerView.Adapter<PromoView> implements PromoView.OnPromoClickListener {
 
     JSONArray data;
@@ -33,10 +30,7 @@ public class PromoAdapter extends RecyclerView.Adapter<PromoView> implements Pro
     public PromoView onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_promo, null);
-        PromoView rcv = new PromoView(layoutView, this);
-
-
-        return rcv;
+        return new PromoView(layoutView, this);
     }
 
     @Override

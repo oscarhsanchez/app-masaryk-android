@@ -5,20 +5,25 @@
     android:layout_height="wrap_content"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
-    android:background="#2EA1C0">
+    android:background="#cd506c">
 
-    <TextView
-        android:id="@+id/txt_title"
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_alignTop="@+id/bt_toggle"
-        android:layout_alignBottom="@+id/bt_toggle"
-        android:textSize="18sp"
-        android:textColor="#FFF"
-        android:shadowDy="1"
-        android:shadowColor="#347FA6"
-        android:shadowRadius="1"
-        android:text="Agregar Bitácora" />
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/desc"
+        android:src="@drawable/logo_topbar"/>
+
+    <ImageButton
+        style="@style/bt_image"
+        android:id="@+id/bt_ar"
+        android:src="@drawable/bt_ar"
+        android:padding="5dp"
+        android:onClick="clickAr"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="3dp"
+        android:contentDescription="@string/desc"/>
 
 </RelativeLayout>

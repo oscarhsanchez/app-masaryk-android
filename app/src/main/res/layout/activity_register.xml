@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="#edeef0"
     android:layout_height="match_parent">
 
     <include
@@ -13,56 +14,69 @@
         android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_below="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="50dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/txt_section_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_register"
+            android:layout_marginBottom="30dp"/>
+
         <EditText
             android:id="@+id/txt_email"
             style="@style/txt_form"
-            android:hint="Correo" />
+            android:inputType="textEmailAddress"
+            android:hint="@string/txt_hint_email" />
 
         <EditText
             android:id="@+id/txt_password"
             android:inputType="textPassword"
             style="@style/txt_form"
-            android:hint="Contraseña" />
+            android:hint="@string/txt_hint_password" />
 
         <EditText
             android:id="@+id/txt_confirm"
             android:inputType="textPassword"
             style="@style/txt_form"
-            android:hint="Confirmar" />
+            android:hint="@string/txt_hint_confirm" />
 
         <EditText
             android:id="@+id/txt_first_name"
             style="@style/txt_form"
-            android:hint="Nombre" />
+            android:hint="@string/txt_hint_name" />
         <EditText
             android:id="@+id/txt_last_name"
             style="@style/txt_form"
-            android:hint="Apellidos" />
+            android:hint="@string/txt_hint_surename" />
 
         <EditText
             android:id="@+id/txt_city"
             style="@style/txt_form"
-            android:hint="Ciudad" />
+            android:hint="@string/txt_hint_city" />
 
         <Button
             android:id="@+id/bt_birthday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="clickBirthday"
-            android:text="Nacimiento"/>
+            android:gravity="start|center_vertical"
+            android:textSize="12sp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bt_birthday"
+            android:text="@string/txt_hint_birthday"/>
 
         <Button
+            android:id="@+id/bt_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/bt_white"
             android:onClick="clickSend"
-            android:text="Enviar"/>
+            android:text="@string/bt_send"/>
 
     </LinearLayout>
 

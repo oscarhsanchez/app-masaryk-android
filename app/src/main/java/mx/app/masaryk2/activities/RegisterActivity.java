@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,16 +22,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import mx.app.masaryk2.R;
+import mx.app.masaryk2.utils.Font;
 import mx.app.masaryk2.utils.User;
 import mx.app.masaryk2.utils.WebBridge;
 
-/**
- * Created by noisedan on 9/29/15.
- */
+
 public class RegisterActivity extends SectionActivity implements WebBridge.WebBridgeListener {
 
 
@@ -57,6 +57,7 @@ public class RegisterActivity extends SectionActivity implements WebBridge.WebBr
         setContentView(R.layout.activity_register);
         overridePendingTransition(R.anim.slide_left_from, R.anim.slide_left);
 
+
         txtEmail     = (EditText)findViewById(R.id.txt_email);
         txtPassword  = (EditText)findViewById(R.id.txt_password);
         txtConfirm   = (EditText)findViewById(R.id.txt_confirm);
@@ -65,9 +66,23 @@ public class RegisterActivity extends SectionActivity implements WebBridge.WebBr
         txtCity      = (EditText)findViewById(R.id.txt_city);
         btBirthday   = (Button)findViewById(R.id.bt_birthday);
 
+
+        txtEmail.setTypeface(Font.get(this, "source-sans-regular"));
+        txtPassword.setTypeface(Font.get(this, "source-sans-regular"));
+        txtConfirm.setTypeface(Font.get(this, "source-sans-regular"));
+        txtFirstName.setTypeface(Font.get(this, "source-sans-regular"));
+        txtLastName.setTypeface(Font.get(this, "source-sans-regular"));
+        txtCity.setTypeface(Font.get(this, "source-sans-regular"));
+        btBirthday.setTypeface(Font.get(this, "source-sans-regular"));
+        ((TextView)findViewById(R.id.txt_section_title)).setTypeface(Font.get(this, "source-sans-semibold"));
+        ((Button)findViewById(R.id.bt_send)).setTypeface(Font.get(this, "source-sans-semibold"));
+
+
         datePickerForm = new SimpleDateFormat("MMMM d, yyyy", new Locale("es", "ES"));
         dateServerForm = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
 
+
+        btBirthday.setTextColor(Color.parseColor("#BBBBBB"));
         Calendar newCalendar = Calendar.getInstance();
         datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
@@ -75,6 +90,7 @@ public class RegisterActivity extends SectionActivity implements WebBridge.WebBr
                 date = Calendar.getInstance();
                 date.set(year, monthOfYear, dayOfMonth);
                 btBirthday.setText(datePickerForm.format(date.getTime()));
+                btBirthday.setTextColor(Color.parseColor("#000000"));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -88,11 +104,12 @@ public class RegisterActivity extends SectionActivity implements WebBridge.WebBr
                 txtLastName.setText(data.getString("last_name"));
                 txtCity.setText(data.getString("hometown"));
 
-                if (!data.getString("birthday").toString().equals("0000-00-00")) {
+                if (!data.getString("birthday").equals("0000-00-00")) {
                     DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                     date = Calendar.getInstance();
                     date.setTime(format.parse(data.getString("birthday")));
                     btBirthday.setText(datePickerForm.format(date.getTime()));
+                    btBirthday.setTextColor(Color.parseColor("#000000"));
                 }
 
             } catch (Exception e) {
@@ -101,6 +118,7 @@ public class RegisterActivity extends SectionActivity implements WebBridge.WebBr
         }
 
         setTitle("Registro");
+        findViewById(R.id.bt_ar).setVisibility(View.GONE);
 
         /*
         txtEmail.setText("test@avanna.com.mx");
@@ -160,7 +178,7 @@ public class RegisterActivity extends SectionActivity implements WebBridge.WebBr
 
     protected void _send() {
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        HashMap<String, Object> params = new HashMap<>();
         params.put("email",      txtEmail.getText());
         params.put("first_name", txtFirstName.getText());
         params.put("last_name",  txtLastName.getText());
@@ -188,21 +206,7 @@ public class RegisterActivity extends SectionActivity implements WebBridge.WebBr
     }
 
     protected boolean _isEmailValid(String email) {
-        String regExpn =
-                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
-
-        CharSequence inputStr = email;
-
-        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputStr);
-
-        if(matcher.matches()) return true;
-        else return false;
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
 

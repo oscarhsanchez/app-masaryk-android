@@ -1,82 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#edeef0">
 
     <include
         android:id="@+id/header"
-        layout="@layout/header" />
+        layout="@layout/header_back" />
 
-    <RelativeLayout
-        android:id="@+id/rl_activity"
+    <LinearLayout
+        android:id="@+id/rl_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/header"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/img_activity"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginRight="10dp" />
+            android:id="@+id/img_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="#CCCCCC"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/desc" />
 
         <TextView
-            android:id="@+id/txt_title_activity"
+            android:id="@+id/txt_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Titulo"
-            android:layout_toRightOf="@+id/img_activity"
-            android:layout_marginBottom="10dp"
-            android:textSize="18sp" />
+            android:layout_margin="10dp"
+            android:text="@string/txt_activity_title"
+            android:textColor="#cd506c"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+
+            <TextView
+                android:id="@+id/txt_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="5"
+                android:text="@string/txt_activity_description"
+                android:textColor="#333333"
+                android:textSize="12sp" />
 
             <LinearLayout
-                android:layout_toRightOf="@+id/img_activity"
-                android:layout_below="@id/txt_title_activity"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="5"
                 android:orientation="horizontal">
 
-                <Button
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="clickWaze"
-                    android:text="Waze" />
+                    android:layout_marginRight="5dp"
+                    android:contentDescription="@string/desc"
+                    android:src="@drawable/icon_pin"/>
 
-                <Button
+                <TextView
+                    android:id="@+id/txt_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="clickGoogle"
-                    android:text="Google" />
+                    android:textColor="#333333"
+                    android:text="@string/txt_activity_address"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
-    </RelativeLayout>
+
+        </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/txt_description"
-        android:layout_below="@+id/rl_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Descripcion"
-        android:padding="10dp"
-        android:textSize="12sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/txt_address"
-        android:layout_below="@+id/txt_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Descripcion"
-        android:padding="10dp"
-        android:layout_marginBottom="30dp"
-        android:textSize="12sp" />
+            <ImageButton
+                style="@style/bt_actions"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:contentDescription="@string/desc"
+                android:onClick="clickWaze"
+                android:background="@drawable/bt_pink_left"
+                android:src="@drawable/icon_waze" />
+
+            <ImageButton
+                style="@style/bt_actions"
+                android:contentDescription="@string/desc"
+                android:onClick="clickMaps"
+                android:background="@drawable/bt_pink_right"
+                android:src="@drawable/icon_map" />
+
+            <LinearLayout
+                android:id="@+id/ll_activity_schedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:drawableLeft="@drawable/icon_cal"
+                    android:drawablePadding="3dp"
+                    android:drawableStart="@drawable/icon_cal"
+                    android:text="@string/txt_activity_date"
+                    android:textColor="#cd506c"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txt_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/icon_loc"
+                    android:drawableStart="@drawable/icon_loc"
+                    android:text="@string/txt_activity_time"
+                    android:textColor="#cd506c"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bt_schedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:background="@null"
+                android:focusable="false"
+                android:onClick="clickSchedule"
+                android:text="@string/bt_schedule" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 
     <fragment
         android:id="@+id/map_view"
-        android:layout_below="@id/txt_address"
+        android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.google.android.gms.maps.MapFragment" />
+        android:layout_below="@+id/rl_container" />
 
 </RelativeLayout>

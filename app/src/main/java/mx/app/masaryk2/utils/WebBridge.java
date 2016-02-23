@@ -35,14 +35,11 @@ public class WebBridge {
     private String url;
 
 
-    static public ArrayList<WebBridge> instances = new ArrayList<WebBridge>();
+    static public ArrayList<WebBridge> instances = new ArrayList<>();
 
-    static public String url(String url, Activity a) {
+    static public String url(String url) {
         if (url.indexOf("http://") == 0) return url;
-
-        int mode = User.mode(a);
         String u = "http://masaryk.avanna.tech/api/" + url;
-
         Log.e("REQUEST URL", u);
         return u;
     }
@@ -52,7 +49,9 @@ public class WebBridge {
         String app_version = "N/A";
         try {
             app_version = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         params.put("app_version", app_version);
         params.put("app_os", "android");
@@ -62,7 +61,8 @@ public class WebBridge {
     static public WebBridge send(String url, HashMap<String,Object> params, String message, Activity activity, WebBridgeListener callback) {
         WebBridge wb = WebBridge.getInstance(activity, message, callback);
         if (wb != null) {
-            wb.send(WebBridge.url(url, activity), params);
+            addVersion(params, activity);
+            wb.send(WebBridge.url(url), params);
         }
         return wb;
     }
@@ -71,7 +71,8 @@ public class WebBridge {
     static public WebBridge send(String url, HashMap<String,Object> params,  Activity activity, WebBridgeListener callback) {
         WebBridge wb = WebBridge.getInstance(activity, null, callback);
         if (wb != null) {
-            wb.send(WebBridge.url(url, activity), params);
+            addVersion(params, activity);
+            wb.send(WebBridge.url(url), params);
         }
         return wb;
     }
@@ -80,7 +81,7 @@ public class WebBridge {
     static public WebBridge send(String url, String message, Activity activity, WebBridgeListener callback) {
         WebBridge wb = WebBridge.getInstance(activity, message, callback);
         if (wb != null) {
-            wb.send(WebBridge.url(url, activity), null);
+            wb.send(WebBridge.url(url), null);
         }
         return wb;
     }
@@ -89,14 +90,15 @@ public class WebBridge {
     static public WebBridge send(String url, HashMap<String,Object> params, Activity activity) {
         WebBridge wb = WebBridge.getInstance(activity, null, null);
         if (wb != null) {
-            wb.send(WebBridge.url(url, activity), params);
+            addVersion(params, activity);
+            wb.send(WebBridge.url(url), params);
         }
         return wb;
     }
 
     static WebBridge getInstance(Activity activity, String message, WebBridgeListener callback) {
 
-        if (WebBridge.haveNetworkConnection(activity) == false) {
+        if (!WebBridge.haveNetworkConnection(activity)) {
             Toast.makeText(activity, activity.getResources().getString(R.string.error_connectivity), Toast.LENGTH_LONG).show();
             return null;
         }
@@ -104,7 +106,6 @@ public class WebBridge {
         WebBridge wb = new WebBridge();
         wb.callback  = callback;
         wb.client    = new AsyncHttpClient();
-        wb.client.setUserAgent("GIRORM Android Client 1.0");
         wb.client.setTimeout(60000);
 
 
@@ -155,6 +156,7 @@ public class WebBridge {
         };
 
         if (p != null) {
+
             RequestParams params = new RequestParams();
 
             for (Map.Entry<String,Object> entry : p.entrySet()) {
@@ -194,7 +196,7 @@ public class WebBridge {
 
     public void success (String response) {
 
-        Log.e("RESPONSE", response.toString());
+        Log.e("RESPONSE", response);
 
         if (progress != null) {
             progress.dismiss();
@@ -205,7 +207,9 @@ public class WebBridge {
             JSONObject json = null;
             try {
                 json = new JSONObject(response);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             callback.onWebBridgeSuccess(url, json);
         }
 

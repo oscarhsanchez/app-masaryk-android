@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import mx.app.masaryk2.R;
 import mx.app.masaryk2.activities.ActivityDetailActivity;
 import mx.app.masaryk2.adapters.ActivityAdapter;
-import mx.app.masaryk2.utils.FragmentInflatorFactory;
 import mx.app.masaryk2.utils.WebBridge;
 
 
@@ -46,11 +45,18 @@ public class ActivityFragment extends SectionFragment implements WebBridge.WebBr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        view     = (RelativeLayout)FragmentInflatorFactory.inflatorFor(inflater, this).inflate(R.layout.fragment_activity, container, false);
+        view     = (RelativeLayout)inflater.inflate(R.layout.fragment_activity, container, false);
         txtTitle = (TextView)view.findViewById(R.id.txt_title);
         listView = (ListView)view.findViewById(R.id.list_view);
 
         listView.setOnItemClickListener(this);
+
+        view.findViewById(R.id.bt_ar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _ar();
+            }
+        });
 
         setTitle("Actividades");
         WebBridge.send("activities", "Descargando", getActivity(), this);
@@ -96,7 +102,7 @@ public class ActivityFragment extends SectionFragment implements WebBridge.WebBr
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        JSONObject item = null;
+        JSONObject item = new JSONObject();
         try {
             item = data.getJSONObject(position);
         } catch (JSONException e) {

@@ -38,6 +38,7 @@ public class PromoView extends RecyclerView.ViewHolder implements View.OnClickLi
         }
 
         position = pos;
+        //.memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE)
         Picasso.with(context).load(url).into(imgPromo);
     }
 

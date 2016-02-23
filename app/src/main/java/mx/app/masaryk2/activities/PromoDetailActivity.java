@@ -3,15 +3,15 @@ package mx.app.masaryk2.activities;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
 import mx.app.masaryk2.R;
 
-/**
- * Created by noisedan on 9/29/15.
- */
+
 public class PromoDetailActivity extends SectionActivity {
 
 
@@ -36,8 +36,7 @@ public class PromoDetailActivity extends SectionActivity {
 
                 data = new JSONObject( getIntent().getStringExtra("data") );
                 String url = data.getJSONObject("full").getString("src");
-
-                Picasso.with(this).load(url).into(imgPromo);
+                Picasso.with(this).load(url).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(imgPromo);
 
             } catch (Exception e) {
                 e.printStackTrace();

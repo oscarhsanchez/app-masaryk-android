@@ -12,8 +12,10 @@ public class Font {
 	static public Typeface get(Context c, String font) {
 		
 		if (fonts == null) {
-			fonts = new HashMap<String,Typeface>();
-			fonts.put(font, Typeface.createFromAsset(c.getAssets(), "fonts/font.ttf"));
+			fonts = new HashMap<>();
+			fonts.put("source-sans-regular",  Typeface.createFromAsset(c.getAssets(), "fonts/SourceSansPro-Regular.otf"));
+			fonts.put("source-sans-light", 	  Typeface.createFromAsset(c.getAssets(), "fonts/SourceSansPro-Light.otf"));
+			fonts.put("source-sans-semibold", Typeface.createFromAsset(c.getAssets(), "fonts/SourceSansPro-Semibold.otf"));
 		}
 		return fonts.get(font);
 	}	

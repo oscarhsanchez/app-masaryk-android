@@ -4,29 +4,65 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_home"
+        android:contentDescription="@string/desc"
+        android:scaleType="centerCrop" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="50dp"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:paddingTop="20dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc"
+            android:src="@drawable/logo_home"/>
 
         <EditText
             android:id="@+id/txt_email"
             style="@style/txt_form"
-            android:hint="Correo" />
+            android:inputType="textEmailAddress"
+            android:background="@drawable/txt_bg_white"
+            android:layout_marginTop="20dp"
+            android:textColor="#FFFFFF"
+            android:hint="@string/txt_hint_email" />
 
         <EditText
             android:id="@+id/txt_password"
             style="@style/txt_form"
             android:inputType="textPassword"
-            android:hint="Contraseña" />
+            android:background="@drawable/txt_bg_white"
+            android:layout_marginTop="20dp"
+            android:textColor="#FFFFFF"
+            android:hint="@string/txt_hint_password" />
 
         <Button
+            android:id="@+id/bt_recover"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:onClick="clickRecover"
+            android:textColor="#a6a9aa"
+            android:background="@null"
+            android:layout_weight="3"
+            android:text="@string/bt_recover"/>
+
+        <Button
+            android:id="@+id/bt_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="clickSend"
-            android:text="Enviar"/>
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bt_white"
+            android:layout_marginTop="30dp"
+            android:text="@string/bt_send"/>
 
     </LinearLayout>
 
@@ -38,27 +74,18 @@
         android:orientation="horizontal">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="clickRecover"
-            android:background="@null"
-            android:layout_weight="3"
-            android:text="Recuperar"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="clickFacebook"
-            android:layout_weight="3"
-            android:text="Facebook"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/bt_register"
+            style="@style/bt_bottom"
             android:onClick="clickRegister"
-            android:background="@null"
-            android:layout_weight="3"
-            android:text="Registro"/>
+            android:background="@drawable/bt_white"
+            android:text="@string/bt_register"/>
+
+        <Button
+            android:id="@+id/bt_facebook"
+            style="@style/bt_bottom"
+            android:onClick="clickFacebook"
+            android:background="@drawable/bt_translucid_fb"
+            android:text="@string/bt_facebook"/>
 
     </LinearLayout>
 

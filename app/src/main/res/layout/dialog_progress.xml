@@ -5,10 +5,10 @@
     android:background="@drawable/bg_dialog_progress"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingBottom="20dp"
-    android:paddingLeft="30dp"
-    android:paddingRight="30dp"
-    android:paddingTop="20dp" >
+    android:paddingBottom="10dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="10dp" >
 
     <ImageView
         android:id="@+id/img_spinner"
@@ -21,8 +21,9 @@
         android:id="@+id/txt_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:text="@string/desc"
+        android:textSize="12sp"
         android:textColor="#ffffffff"
         android:textStyle="bold" />
 

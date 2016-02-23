@@ -22,6 +22,10 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACTION_DIAL" />
+    <uses-permission android:name="android.permission.ACTION_CALL" />
+    <uses-permission android:name="com.microsoft.skydrive.content.MetadataContentProvider" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
@@ -55,7 +59,6 @@
             android:name=".activities.RegisterActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" >
-
         </activity>
 
         <activity
@@ -119,6 +122,7 @@
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCdZn35cm2nR6B80ry4NGEWLWUMQEYuF8Y"/>
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        <meta-data android:name="io.fabric.ApiKey" android:value="a34df7c556e8744d4522cab980dd00fb202d859f" />
 
     </application>
 

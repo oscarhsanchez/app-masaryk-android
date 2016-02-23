@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import mx.app.masaryk2.R;
 import mx.app.masaryk2.activities.PromoDetailActivity;
 import mx.app.masaryk2.adapters.PromoAdapter;
-import mx.app.masaryk2.utils.FragmentInflatorFactory;
 import mx.app.masaryk2.utils.WebBridge;
 
 
@@ -45,13 +44,20 @@ public class PromoFragment extends SectionFragment implements WebBridge.WebBridg
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        view     = (RelativeLayout)FragmentInflatorFactory.inflatorFor(inflater, this).inflate(R.layout.fragment_promo, container, false);
+        view     = (RelativeLayout)inflater.inflate(R.layout.fragment_promo, container, false);
         txtTitle = (TextView)view.findViewById(R.id.txt_title);
         layout   = new StaggeredGridLayoutManager(2, 1);
         recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layout);
+
+        view.findViewById(R.id.bt_ar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _ar();
+            }
+        });
 
         setTitle("Promociones");
         WebBridge.send("promos", "Descargando", getActivity(), this);

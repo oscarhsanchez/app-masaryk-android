@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="#edeef0"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include
@@ -15,16 +16,27 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/txt_section_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_recover"
+            android:layout_marginBottom="30dp"/>
+
         <EditText
             android:id="@+id/txt_email"
             style="@style/txt_form"
-            android:hint="Correo" />
+            android:inputType="textEmailAddress"
+            android:hint="@string/txt_hint_email" />
 
         <Button
+            android:id="@+id/bt_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/bt_white"
             android:onClick="clickSend"
-            android:text="Enviar"/>
+            android:text="@string/bt_send"/>
+
 
     </LinearLayout>
 

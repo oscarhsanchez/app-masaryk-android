@@ -4,13 +4,14 @@
 
     <include
         android:id="@+id/header"
-        layout="@layout/header" />
+        layout="@layout/header_back" />
 
     <ImageView
         android:id="@+id/img_promo"
         android:layout_below="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"/>
+        android:contentDescription="@string/desc"
+        android:background="#edeef0"/>
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import mx.app.masaryk2.R;
+import mx.app.masaryk2.utils.Font;
 
 public class ProgressDialog extends Dialog {
 	
@@ -32,6 +33,7 @@ public class ProgressDialog extends Dialog {
 	public void setMessage(CharSequence message) {
 		if(message != null && message.length() > 0) {
 			findViewById(R.id.txt_message).setVisibility(View.VISIBLE);
+
 			TextView txt = (TextView)findViewById(R.id.txt_message);
 			txt.setText(message);
 			txt.invalidate();
@@ -48,13 +50,14 @@ public class ProgressDialog extends Dialog {
 			dialog.findViewById(R.id.txt_message).setVisibility(View.GONE);
 		} else {
 			TextView txt = (TextView)dialog.findViewById(R.id.txt_message);
+			txt.setTypeface(Font.get(context, "source-sans-light"));
 			txt.setText(message);
 		}
 		dialog.setCancelable(cancelable);
 		dialog.setOnCancelListener(cancelListener);
 		dialog.getWindow().getAttributes().gravity= Gravity.CENTER;
 		WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-		lp.dimAmount=0.2f;
+		lp.dimAmount = 0.2f;
 		dialog.getWindow().setAttributes(lp); 
 		dialog.show();
 		return dialog;

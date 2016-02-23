@@ -2,22 +2,21 @@ package mx.app.masaryk2.activities;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import mx.app.masaryk2.R;
+import mx.app.masaryk2.utils.Font;
 import mx.app.masaryk2.utils.WebBridge;
 
-/**
- * Created by noisedan on 9/29/15.
- */
 public class RecoverActivity extends SectionActivity implements WebBridge.WebBridgeListener {
 
 
@@ -33,6 +32,12 @@ public class RecoverActivity extends SectionActivity implements WebBridge.WebBri
         overridePendingTransition(R.anim.slide_left_from, R.anim.slide_left);
 
         txtEmail = (EditText)findViewById(R.id.txt_email);
+
+        txtEmail.setTypeface(Font.get(this, "source-sans-regular"));
+        ((TextView)findViewById(R.id.txt_section_title)).setTypeface(Font.get(this, "source-sans-semibold"));
+        ((Button)findViewById(R.id.bt_send)).setTypeface(Font.get(this, "source-sans-semibold"));
+
+        findViewById(R.id.bt_ar).setVisibility(View.GONE);
 
         setTitle("Recuperar");
     }
@@ -60,28 +65,14 @@ public class RecoverActivity extends SectionActivity implements WebBridge.WebBri
 
     protected void _send() {
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        HashMap<String, Object> params = new HashMap<>();
         params.put("email", txtEmail.getText());
 
         WebBridge.send("recover", params, "Enviando", this, this);
     }
 
     protected boolean _isEmailValid(String email) {
-        String regExpn =
-                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
-
-        CharSequence inputStr = email;
-
-        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputStr);
-
-        if(matcher.matches()) return true;
-        else return false;
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
 
