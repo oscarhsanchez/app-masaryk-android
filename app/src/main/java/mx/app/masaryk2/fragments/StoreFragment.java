@@ -103,8 +103,6 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
         txtSearch.setTypeface(Font.get(getActivity(), "source-sans-regular"));
         btCancel.setTypeface(Font.get(getActivity(), "source-sans-semibold"));
 
-        setTitle("Locales");
-
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
         if (result == ConnectionResult.SUCCESS) {
@@ -126,6 +124,10 @@ public class StoreFragment extends SectionFragment implements WebBridge.WebBridg
                 }
             }
         });
+
+        _ar();
+
+        setTitle("Locales");
 
         view.findViewById(R.id.bt_ar).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -223,20 +223,6 @@ public class LoginActivity extends Activity implements WebBridge.WebBridgeListen
         if (requestCode == 1 && resultCode != RESULT_OK) {
             finish();
         }
-        /*
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            new AlertDialog.Builder(this).setMessage("Su sesión ha sido cerrada").setNeutralButton(R.string.bt_close, null).show();
-
-        }  else if (requestCode == 1 && resultCode != RESULT_OK) {
-            finish();
-        }
-        */
-        /*
-        else if (requestCode == 1 && resultCode == 501) {
-            new AlertDialog.Builder(this).setTitle(R.string.txt_error).setMessage("Su sessión expiró, ingrese de nuevo.").setNeutralButton(R.string.bt_close, null).show();
-        }
-         */
-
     }
 
     @Override

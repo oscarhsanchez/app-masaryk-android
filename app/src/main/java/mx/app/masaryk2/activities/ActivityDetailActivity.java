@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import mx.app.masaryk2.R;
+import mx.app.masaryk2.utils.ActivitySchedule;
 import mx.app.masaryk2.utils.Font;
 
 
@@ -112,10 +113,12 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
 
                 txtTitle.setText( data.getString("title") );
                 txtAddress.setText(data.getString("address"));
-                txtDescription.setText( data.getString("description") );
+                txtDescription.setText(data.getString("description"));
 
                 String url = data.getJSONObject("full").getString("src");
                 Picasso.with(this).load(url).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(imgGallery);
+
+                btSchedule.setText( ActivitySchedule.exists( data.getInt("id") ) ? "Eliminar" : "Agendar" );
 
 
             } catch (Exception e) {
@@ -131,7 +134,12 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
 	/* CLICK EVENTS */
 
     public void clickSchedule(View v) {
-
+        ActivitySchedule.schedule(data, this, new ActivitySchedule.ActivityScheduleListener() {
+            @Override
+            public void onScheduled(Boolean status) {
+                btSchedule.setText(status ? "Eliminar" : "Agendar");
+            }
+        });
     }
 
 

@@ -1,5 +1,6 @@
 package mx.app.masaryk2.activities;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.TextView;
@@ -28,6 +29,9 @@ public class SectionActivity extends FragmentActivity {
     }
 
     public void clickAr(View v) {
+        Intent intent = new Intent(this, ArActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
     }
 
     @Override

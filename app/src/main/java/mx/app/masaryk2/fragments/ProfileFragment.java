@@ -71,7 +71,6 @@ public class ProfileFragment extends SectionFragment implements WebBridge.WebBri
     SimpleDateFormat datePickerForm;
     SimpleDateFormat dateServerForm;
 
-
     String icFilePath;
     String imgPath;
     int icType;
@@ -169,6 +168,8 @@ public class ProfileFragment extends SectionFragment implements WebBridge.WebBri
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         loaded = false;
+
+        _ar();
 
         setTitle("Perfil");
         WebBridge.send("profile", "Descargando", getActivity(), this);

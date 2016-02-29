@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 import mx.app.masaryk2.R;
 import mx.app.masaryk2.activities.ActivityDetailActivity;
 import mx.app.masaryk2.adapters.ActivityAdapter;
+import mx.app.masaryk2.utils.ActivitySchedule;
 import mx.app.masaryk2.utils.WebBridge;
 
 
@@ -57,6 +59,8 @@ public class ActivityFragment extends SectionFragment implements WebBridge.WebBr
                 _ar();
             }
         });
+
+        _ar();
 
         setTitle("Actividades");
         WebBridge.send("activities", "Descargando", getActivity(), this);
@@ -100,6 +104,11 @@ public class ActivityFragment extends SectionFragment implements WebBridge.WebBr
 
     }
 
+
+
+    /*---------------------*/
+	/* ITEM CLICK LISTENER */
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         JSONObject item = new JSONObject();
@@ -112,7 +121,28 @@ public class ActivityFragment extends SectionFragment implements WebBridge.WebBr
         Intent intent = new Intent(getActivity(), ActivityDetailActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.putExtra("data", item.toString());
-        startActivity(intent);
+        startActivityForResult(intent, 5);
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent d) {
+        if (requestCode == 5) {
+            if (data != null) {
+                for (int i=0; i<listView.getChildCount(); i++) {
+                    int pos   = i - listView.getFirstVisiblePosition();
+                    View v    = listView.getChildAt(pos);
+                    Button bt = (Button)v.findViewById(R.id.bt_schedule);
+                    try {
+                        bt.setText( ActivitySchedule.exists(data.getJSONObject(pos).getInt("id")) ? "Eliminar" : "Agendar" );
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+
 }
 

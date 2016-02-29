@@ -59,6 +59,8 @@ public class PromoFragment extends SectionFragment implements WebBridge.WebBridg
             }
         });
 
+        _ar();
+
         setTitle("Promociones");
         WebBridge.send("promos", "Descargando", getActivity(), this);
 

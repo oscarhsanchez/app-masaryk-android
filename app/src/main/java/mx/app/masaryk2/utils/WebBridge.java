@@ -45,7 +45,7 @@ public class WebBridge {
     }
 
 
-    static private void addVersion(Map<String,Object> params, Activity activity) {
+    static private void addVersion(Map<String,Object> params, Context activity) {
         String app_version = "N/A";
         try {
             app_version = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
@@ -58,7 +58,7 @@ public class WebBridge {
     }
 
 
-    static public WebBridge send(String url, HashMap<String,Object> params, String message, Activity activity, WebBridgeListener callback) {
+    static public WebBridge send(String url, HashMap<String,Object> params, String message, Context activity, WebBridgeListener callback) {
         WebBridge wb = WebBridge.getInstance(activity, message, callback);
         if (wb != null) {
             addVersion(params, activity);
@@ -68,7 +68,7 @@ public class WebBridge {
     }
 
 
-    static public WebBridge send(String url, HashMap<String,Object> params,  Activity activity, WebBridgeListener callback) {
+    static public WebBridge send(String url, HashMap<String,Object> params,  Context activity, WebBridgeListener callback) {
         WebBridge wb = WebBridge.getInstance(activity, null, callback);
         if (wb != null) {
             addVersion(params, activity);
@@ -78,7 +78,7 @@ public class WebBridge {
     }
 
 
-    static public WebBridge send(String url, String message, Activity activity, WebBridgeListener callback) {
+    static public WebBridge send(String url, String message, Context activity, WebBridgeListener callback) {
         WebBridge wb = WebBridge.getInstance(activity, message, callback);
         if (wb != null) {
             wb.send(WebBridge.url(url), null);
@@ -87,7 +87,7 @@ public class WebBridge {
     }
 
 
-    static public WebBridge send(String url, HashMap<String,Object> params, Activity activity) {
+    static public WebBridge send(String url, HashMap<String,Object> params, Context activity) {
         WebBridge wb = WebBridge.getInstance(activity, null, null);
         if (wb != null) {
             addVersion(params, activity);
@@ -96,7 +96,7 @@ public class WebBridge {
         return wb;
     }
 
-    static WebBridge getInstance(Activity activity, String message, WebBridgeListener callback) {
+    static WebBridge getInstance(Context activity, String message, WebBridgeListener callback) {
 
         if (!WebBridge.haveNetworkConnection(activity)) {
             Toast.makeText(activity, activity.getResources().getString(R.string.error_connectivity), Toast.LENGTH_LONG).show();
@@ -218,7 +218,7 @@ public class WebBridge {
     }
 
 
-    static public boolean haveNetworkConnection(Activity a) {
+    static public boolean haveNetworkConnection(Context a) {
 
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;

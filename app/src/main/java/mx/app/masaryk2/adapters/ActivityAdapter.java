@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import mx.app.masaryk2.R;
+import mx.app.masaryk2.utils.ActivitySQL;
+import mx.app.masaryk2.utils.ActivitySchedule;
 import mx.app.masaryk2.utils.Font;
 
 public class ActivityAdapter extends BaseAdapter {
@@ -29,9 +31,10 @@ public class ActivityAdapter extends BaseAdapter {
     Activity activity;
     LayoutInflater inflater = null;
 
+
     public ActivityAdapter(LayoutInflater i, JSONArray d, Activity a) {
         inflater = i;
-        data     = d;
+        data = d;
         activity = a;
     }
 
@@ -69,18 +72,34 @@ public class ActivityAdapter extends BaseAdapter {
             ((TextView) vi.findViewById(R.id.txt_description)).setTypeface(Font.get(activity, "source-sans-light"));
             ((TextView) vi.findViewById(R.id.txt_date)).setTypeface(Font.get(activity, "source-sans-regular"));
             ((TextView) vi.findViewById(R.id.txt_time)).setTypeface(Font.get(activity, "source-sans-regular"));
-            ((Button)   vi.findViewById(R.id.bt_schedule)).setTypeface(Font.get(activity, "source-sans-regular"));
+            ((Button) vi.findViewById(R.id.bt_schedule)).setTypeface(Font.get(activity, "source-sans-regular"));
+
+            vi.findViewById(R.id.bt_schedule).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position    = Integer.parseInt(v.getTag().toString());
+                    final Button bt = (Button)v;
+                    ActivitySchedule.schedule(getItem(position), activity, new ActivitySchedule.ActivityScheduleListener() {
+                        @Override
+                        public void onScheduled(Boolean status) {
+                            bt.setText( status ? "Eliminar" : "Agendar" );
+                        }
+                    });
+                }
+            });
 
         }
 
+        int activity = 0;
         String title = "", description = "", type = "", date_from = "", date_to = "";
         try {
             JSONObject item = data.getJSONObject(position);
-            title        = item.getString("title");
-            description  = item.getString("description");
-            type         = item.getString("type");
-            date_from    = item.getString("date_from");
-            date_to      = item.getString("date_to");
+            activity = item.getInt("id");
+            title = item.getString("title");
+            description = item.getString("description");
+            type = item.getString("type");
+            date_from = item.getString("date_from");
+            date_to = item.getString("date_to");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -106,10 +125,17 @@ public class ActivityAdapter extends BaseAdapter {
         ((TextView) vi.findViewById(R.id.txt_description)).setText(description);
         ((TextView) vi.findViewById(R.id.txt_date)).setText(formatd.format(datef));
         ((TextView) vi.findViewById(R.id.txt_time)).setText(formatt.format(datef) + " - " + formatt.format(datet));
-        ((ImageView)vi.findViewById(R.id.img_type)).setImageResource(type.equalsIgnoreCase("paga") ? R.drawable.icon_activity_pay : R.drawable.icon_activity_free );
+        ((ImageView) vi.findViewById(R.id.img_type)).setImageResource(type.equalsIgnoreCase("paga") ? R.drawable.icon_activity_pay : R.drawable.icon_activity_free);
+        vi.findViewById(R.id.bt_schedule).setTag(position);
 
+        if (ActivitySchedule.exists(activity)) {
+            ((Button) vi.findViewById(R.id.bt_schedule)).setText("Eliminar");
+        } else {
+            ((Button) vi.findViewById(R.id.bt_schedule)).setText("Agendar");
+        }
 
         return vi;
 
     }
+
 }
