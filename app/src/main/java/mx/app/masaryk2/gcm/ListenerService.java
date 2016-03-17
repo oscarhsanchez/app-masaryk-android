@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -17,8 +18,12 @@ public class ListenerService extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
+        Log.e("LOOOL", "createNotification");
+
         String message = data.getString("message");
-        createNotification(from, message);
+        String title   = getString(R.string.app_name);
+        createNotification(title, message);
+
     }
 
     // Creates notification based on title and body received

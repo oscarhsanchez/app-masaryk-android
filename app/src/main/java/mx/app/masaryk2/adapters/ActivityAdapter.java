@@ -66,6 +66,7 @@ public class ActivityAdapter extends BaseAdapter {
         View vi = convertView;
 
         if (convertView == null) {
+
             vi = inflater.inflate(R.layout.adapter_activity, parent, false);
 
             ((TextView) vi.findViewById(R.id.txt_title)).setTypeface(Font.get(activity, "source-sans-semibold"));
@@ -90,16 +91,17 @@ public class ActivityAdapter extends BaseAdapter {
 
         }
 
-        int activity = 0;
+        int activity = 0, status = 0;
         String title = "", description = "", type = "", date_from = "", date_to = "";
         try {
             JSONObject item = data.getJSONObject(position);
-            activity = item.getInt("id");
-            title = item.getString("title");
+            activity    = item.getInt("id");
+            status      = item.getInt("status");
+            title       = item.getString("title");
             description = item.getString("description");
-            type = item.getString("type");
-            date_from = item.getString("date_from");
-            date_to = item.getString("date_to");
+            type        = item.getString("type");
+            date_from   = item.getString("date_from");
+            date_to     = item.getString("date_to");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -132,6 +134,17 @@ public class ActivityAdapter extends BaseAdapter {
             ((Button) vi.findViewById(R.id.bt_schedule)).setText("Eliminar");
         } else {
             ((Button) vi.findViewById(R.id.bt_schedule)).setText("Agendar");
+        }
+
+        if (status == 1) {
+            ((TextView) vi.findViewById(R.id.txt_status)).setText("- Abierto -");
+            vi.setAlpha(1);
+        } else if (status == 2) {
+            ((TextView) vi.findViewById(R.id.txt_status)).setText("- Pocos lugares -");
+            vi.setAlpha(1);
+        } else {
+            ((TextView) vi.findViewById(R.id.txt_status)).setText("- Lleno -");
+            vi.setAlpha(0.5f);
         }
 
         return vi;

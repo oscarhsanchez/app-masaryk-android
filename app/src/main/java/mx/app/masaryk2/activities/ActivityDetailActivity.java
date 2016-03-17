@@ -9,21 +9,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import org.brickred.socialauth.android.DialogListener;
+import org.brickred.socialauth.android.SocialAuthAdapter;
+import org.brickred.socialauth.android.SocialAuthError;
+import org.brickred.socialauth.android.SocialAuthListener;
+import org.brickred.socialauth.android.SocialAuthAdapter.Provider;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -32,11 +32,12 @@ import java.util.Date;
 import java.util.Locale;
 
 import mx.app.masaryk2.R;
+import mx.app.masaryk2.dialogs.ProgressDialog;
 import mx.app.masaryk2.utils.ActivitySchedule;
 import mx.app.masaryk2.utils.Font;
 
 
-public class ActivityDetailActivity extends SectionActivity implements OnMapReadyCallback {
+public class ActivityDetailActivity extends SectionActivity {
 
 
 	/*------------*/
@@ -47,11 +48,14 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
     TextView txtDescription;
     TextView txtDate;
     TextView txtTime;
+    TextView txtStatus;
     ImageView imgGallery;
     Button btSchedule;
 
     JSONObject data;
-    GoogleMap mapView;
+
+    SocialAuthAdapter socialAdapter;
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +65,15 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
 
         overridePendingTransition(R.anim.slide_left_from, R.anim.slide_left);
 
+        socialAdapter = new SocialAuthAdapter(new ResponseListener());
+        socialAdapter.addCallBack(Provider.TWITTER, "http://sutsix.mx/");
+
         txtTitle         = (TextView)findViewById(R.id.txt_title);
         txtAddress       = (TextView)findViewById(R.id.txt_address);
         txtDescription   = (TextView)findViewById(R.id.txt_description);
         txtDate          = (TextView)findViewById(R.id.txt_date);
         txtTime          = (TextView)findViewById(R.id.txt_time);
+        txtStatus        = (TextView)findViewById(R.id.txt_status);
         imgGallery       = (ImageView)findViewById(R.id.img_gallery);
         btSchedule       = (Button)findViewById(R.id.bt_schedule);
 
@@ -79,17 +87,7 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
         if (getIntent().hasExtra("data")) {
             try {
 
-                data = new JSONObject( getIntent().getStringExtra("data") );
-
-                GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-                int result = googleAPI.isGooglePlayServicesAvailable(this);
-                if (result == ConnectionResult.SUCCESS) {
-                    ((MapFragment) getFragmentManager().findFragmentById(R.id.map_view)).getMapAsync(this);
-                } else {
-                    if(googleAPI.isUserResolvableError(result)) {
-                        googleAPI.getErrorDialog(this, result, 0).show();
-                    }
-                }
+                data = new JSONObject( getIntent().getStringExtra("data"));
 
                 String date_from = data.getString("date_from");
                 String date_to   = data.getString("date_to");
@@ -119,6 +117,21 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
                 Picasso.with(this).load(url).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(imgGallery);
 
                 btSchedule.setText( ActivitySchedule.exists( data.getInt("id") ) ? "Eliminar" : "Agendar" );
+
+                int status = data.getInt("status");
+                if (status == 1) {
+                    txtStatus.setText("- Abierto -");
+                } else if (status == 2) {
+                    txtStatus.setText("- Pocos lugares -");
+                } else {
+                    txtStatus.setText("- Lleno -");
+                }
+
+                /*
+
+                    tooltipView.showWithTitle("Haz clic aquí y busca\nlos puntos RA para encontrar ofertas", image: UIImage(named: "icon_tooltip"), anchorToView: topbar.ba);
+
+                 */
 
 
             } catch (Exception e) {
@@ -189,6 +202,34 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
 
     }
 
+    public void clickShare(View v) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Selecciona una opción");
+
+        builder.setPositiveButton("Twitter", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                _twitter();
+            }
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        builder.setNeutralButton("Facebook", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                _facebook();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
 
 
     /*----------------*/
@@ -198,8 +239,8 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
         try {
             String url = "waze://?q=" + data.getDouble("lat") + "," + data.getDouble("lng");
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity( intent );
-        } catch ( Exception exception  ) {
+            startActivity(intent);
+        } catch (Exception exception) {
             Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
             startActivity(intent);
         }
@@ -216,31 +257,95 @@ public class ActivityDetailActivity extends SectionActivity implements OnMapRead
         }
     }
 
+    protected void _facebook() {
 
-
-    /*---------------*/
-	/* MAPS LISTENER */
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        mapView = googleMap;
-
+        String url = "";
         try {
-            double lat   = data.getDouble("lat");
-            double lng   = data.getDouble("lng");
-            String title = data.getString("title");
-            LatLng point = new LatLng(lat, lng);
-            BitmapDescriptor b = BitmapDescriptorFactory.fromResource(R.drawable.map_pin);
-
-            MarkerOptions o = new MarkerOptions().position(point).title(title).icon(b);
-
-            mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
-            mapView.addMarker(o);
-
-        } catch (Exception e) {
+            url = data.getString("url");
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        Uri uri = Uri.parse(url);
+        ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(uri) .build();
+        ShareDialog.show(this, content);
     }
+
+    protected void _twitter() {
+        progress = ProgressDialog.show(ActivityDetailActivity.this, "Obteniendo permisos", true, false, null);
+        socialAdapter.authorize(ActivityDetailActivity.this, Provider.TWITTER);
+        //TweetComposer.Builder builder = new TweetComposer.Builder(this).text(url);
+        //builder.show();
+    }
+
+
+    private final class ResponseListener implements DialogListener {
+
+        public void onComplete(Bundle values) {
+
+            progress.dismiss();
+            progress = null;
+
+            String url = "";
+            try {
+                url = data.getString("url");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                progress = ProgressDialog.show(ActivityDetailActivity.this, "Publicando", true, false, null);
+                socialAdapter.updateStatus(url, new PostStatusListener(), true);
+            } catch (Exception e) { e.printStackTrace(); }
+        }
+
+        @Override
+        public void onBack() {
+            if (progress != null) {
+                progress.dismiss();
+                progress = null;
+            }
+        }
+        @Override
+        public void onCancel() {
+            if (progress != null) {
+                progress.dismiss();
+                progress = null;
+            }
+        }
+        @Override
+        public void onError(SocialAuthError arg0) {
+            // TODO Auto-generated method stub
+            progress.dismiss();
+            progress = null;
+            Toast.makeText(ActivityDetailActivity.this, "Error desconocido", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // To get status of message after authentication
+    private final class PostStatusListener implements SocialAuthListener<Integer> {
+
+        @Override
+        public void onError(SocialAuthError e) {
+            progress.dismiss();
+            progress = null;
+            Toast.makeText(ActivityDetailActivity.this, "Error desconocido", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onExecute(String provider, Integer t) {
+            // TODO Auto-generated method stub
+            Integer status = t;
+
+            progress.dismiss();
+            progress = null;
+
+            if (status.intValue() == 200 || status.intValue() == 201 || status.intValue() == 204) {
+                Toast.makeText(ActivityDetailActivity.this, "Publicado", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(ActivityDetailActivity.this, "Error desconocido", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 }

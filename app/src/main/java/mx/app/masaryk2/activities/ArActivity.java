@@ -1,38 +1,26 @@
 package mx.app.masaryk2.activities;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.craftar.CraftARActivity;
-import com.craftar.CraftARItem;
-import com.craftar.CraftARItemAR;
-import com.craftar.CraftAROnDeviceCollection;
-import com.craftar.CraftAROnDeviceCollectionManager;
-import com.craftar.CraftARSDK;
-import com.craftar.CraftARTracking;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.wikitude.architect.ArchitectView;
+import com.wikitude.architect.StartupConfiguration;
 
-import org.json.JSONObject;
+import java.io.IOException;
 
 import mx.app.masaryk2.R;
 
-public class ArActivity extends CraftARActivity {
+public class ArActivity extends SectionActivity {
 
 
-	/*------------*/
+    final StartupConfiguration config = new StartupConfiguration("zLrgXqkEd2iB3oAAo3DjkbTJfsnWChVxgPRewWO5t6niIbN2dVp4LZU7j5Pt9B8jlQPFeJ0h4f85xNvoL3U5LR4nahOxiNnPIHGkCkSKKlA1YCotNZJtInMVermZGy4yoFQBWbKJSEUJSo39z4PbBxQKFvfYYJfGTpcDU3PtXNdTYWx0ZWRfXxErF0akR/a4lGXJ4y2I0FaRY0CEEL1Ek/6PLL6PA1P/Po6hD0/vQt5MaZo9IjVUi/XWR7OAs5T/OqdOV9++LI4Vui9OfQOCCBsULCNqtMV25MEEWj6qL49h95+M8R0lOFBOZjg+8NTRGHoEIUI7lfScqBcHWYANVgZgSEP/mv+lIVGzOFGClP3tgZfSLty8YZu66Mbowull0eYoW1Hr8whgo3MDnCDB//3IWAZJwhL2E5GliIWEvlLSDYT8Fkbb0sS6awMH4yL2Cx1QLo0b/0DI5/ohtlVCmoiv6DQRwI9TDith2vGdRIxTvVEdSmWi4eWfmChQEsABC8BIJjdDe65rQ0niLgg1MLJ45ZDdvasxh2WTZusyny/Z5hLYSCj2Jl4lfMJVa1pXVoXtsMVqm/WppAkdDokI8nJu3mnQdXLybTC8VRh61VQUT+4HJ1Z3zA7C2JFxEjMCsn1zKVGH0PENW07aaBcYZy4HTxzU+dF987BkmNsyn9I=");
+
+
+    /*------------*/
 	/* PROPERTIES */
-
-    CraftARTracking mTracking;
-    CraftARSDK mCraftARSDK;
-    CraftAROnDeviceCollectionManager mCollectionManager;
-    CraftAROnDeviceCollection mCollection;
-
-    private final String TAG = "OnDeviceARActivity";
+    protected ArchitectView architectView;
 
 
     @Override
@@ -40,57 +28,65 @@ public class ArActivity extends CraftARActivity {
 
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_up, R.anim.static_motion);
-
-    }
-
-    @Override
-    public void onPostCreate() {
-
         setContentView(R.layout.activity_ar);
 
-        mCraftARSDK = CraftARSDK.Instance();
-        mCraftARSDK.startCapture(this);
-
-        mTracking = CraftARTracking.Instance();
-
-
-    }
-
-    @Override
-    public void onCameraOpenFailed() {
-        Toast.makeText(getApplicationContext(), "Camera error", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onPreviewStarted(int i, int i1) {
-        mCollection =  CraftAROnDeviceCollectionManager.Instance().get("Masaryk2");
-        /**
-         * As the on-device collection is already in the device (we did it in the Splash Screen), we will add the collection items
-         * to the tracking and start the AR experience.
-         */
-        loadCollection();
-    }
-
-    private void loadCollection() {
-        // Get all item UUIDs in the collection
-
-        Log.e("", "");
-
-        for(String itemUUID: mCollection.listItems()){
-            // Get the item and check that it is an AR item
-            CraftARItem item = mCollection.getItem(itemUUID);
-            if(item.isAR()){
-                CraftARItemAR itemAR = (CraftARItemAR)item;
-                // Add the item to the tracking
-                Log.e(TAG, "Adding item " + item.getItemName() + " for tracking");
-                mTracking.addItem(itemAR);
-            }
+        if (ArchitectView.isDeviceSupported(this)) {
+            architectView = (ArchitectView)findViewById(R.id.architect_view);
+            architectView.onCreate(config);
+        } else {
+            new AlertDialog.Builder(this).setTitle(R.string.txt_error).setMessage("Tu dispositivo no sopora realidad aumentada.").setNeutralButton(R.string.bt_close, null).show();
         }
-        // Start tracking this collection.
-        mTracking.startTracking();
+
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        architectView.onPostCreate();
+        try {
+            architectView.load("ar/index.html");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (architectView != null) {
+            architectView.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (architectView != null) {
+            architectView.onPause();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (architectView != null) {
+            architectView.onDestroy();
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (architectView != null) {
+            architectView.onLowMemory();
+        }
+    }
 
     /*--------------*/
 	/* CLICK EVENTS */
@@ -100,8 +96,5 @@ public class ArActivity extends CraftARActivity {
         overridePendingTransition(R.anim.static_motion, R.anim.slide_down);
     }
 
-    @Override
-    public void onBackPressed() {
-        clickBack(null);
-    }
+
 }

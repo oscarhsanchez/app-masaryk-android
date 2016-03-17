@@ -7,11 +7,19 @@
         android:id="@+id/header"
         layout="@layout/header_modal" />
 
+    <com.wikitude.architect.ArchitectView
+        android:layout_below="@+id/header"
+        android:id="@+id/architect_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+    <!--
     <com.craftar.CraftARCameraView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:layout_below="@+id/header" />
+    -->
 
 </RelativeLayout>

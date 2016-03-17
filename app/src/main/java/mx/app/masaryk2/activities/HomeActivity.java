@@ -12,10 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.craftar.CraftARError;
-import com.craftar.CraftAROnDeviceCollection;
-import com.craftar.CraftAROnDeviceCollectionManager;
-import com.craftar.CraftARSDK;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -24,20 +20,19 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import mx.app.masaryk2.Masaryk2;
 import mx.app.masaryk2.R;
 import mx.app.masaryk2.fragments.ActivityFragment;
 import mx.app.masaryk2.fragments.ProfileFragment;
 import mx.app.masaryk2.fragments.PromoFragment;
 import mx.app.masaryk2.fragments.SectionFragment;
 import mx.app.masaryk2.fragments.StoreFragment;
-import mx.app.masaryk2.gcm.IntentService;
+import mx.app.masaryk2.gcm.RegistrationIntentService;
 import mx.app.masaryk2.utils.Font;
 import mx.app.masaryk2.utils.User;
 import mx.app.masaryk2.utils.WebBridge;
 
 
-public class HomeActivity extends FragmentActivity implements SectionFragment.SectionFragmentListener, WebBridge.WebBridgeListener, CraftAROnDeviceCollectionManager.AddCollectionListener {
+public class HomeActivity extends FragmentActivity implements SectionFragment.SectionFragmentListener, WebBridge.WebBridgeListener {
 
 
 	/*------------*/
@@ -61,23 +56,13 @@ public class HomeActivity extends FragmentActivity implements SectionFragment.Se
         tabs[2] = (Button)findViewById(R.id.bt_tab_bottom_3);
         tabs[3] = (Button)findViewById(R.id.bt_tab_bottom_4);
 
-        for (int i=0; i<tabs.length; i++) {
-            tabs[i].setTypeface(Font.get(this, "source-sans-regular"));
+        for (Button tab : tabs) {
+            tab.setTypeface(Font.get(this, "source-sans-regular"));
         }
 
         if (checkPlayServices()) {
-            Intent intent = new Intent(this, IntentService.class);
+            Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
-        }
-
-        CraftARSDK.Instance().init(getApplicationContext());
-        CraftAROnDeviceCollectionManager collectionManager = CraftAROnDeviceCollectionManager.Instance();
-        CraftAROnDeviceCollection collection = collectionManager.get("Masaryk2");
-        if(collection == null) {
-            Log.e("", "LOADING");
-            collectionManager.addCollection("arbundle.zip", this);
-        } else {
-            Log.e("", "NOT LOADING");
         }
 
         WebBridge.send("verify", "Validando", this, this);
@@ -195,7 +180,19 @@ public class HomeActivity extends FragmentActivity implements SectionFragment.Se
             }
 
         } else {
-            update(2);
+
+            String splash  = "";
+            try {
+                splash = json.getJSONObject("data").getString("splash");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Intent intent = new Intent(HomeActivity.this, SplashActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            intent.putExtra("url", splash);
+            startActivityForResult(intent, 2);
+
         }
     }
 
@@ -205,22 +202,15 @@ public class HomeActivity extends FragmentActivity implements SectionFragment.Se
     }
 
 
-
-    /*---------------------*/
-	/* COLLECTION LISTENER */
-
-    @Override
-    public void collectionAdded(CraftAROnDeviceCollection craftAROnDeviceCollection) {
-        Log.e("", "collectionAdded");
-    }
+    /*-------------------*/
+	/* OVERRIDE ACTIVITY */
 
     @Override
-    public void addCollectionFailed(CraftARError craftARError) {
-        Log.e("", "addCollectionFailed: " + craftARError.getErrorMessage());
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode != RESULT_OK) {
+            update(2);
+        }
     }
 
-    @Override
-    public void addCollectionProgress(float v) {
-        Log.e("", "addCollectionProgress " + v);
-    }
 }

@@ -73,6 +73,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:1.0.0'
     compile 'com.kbeanie:image-chooser-library:+@aar'
+    compile (name: 'wikitudesdk', ext:'aar')
 
 
     //MOCA SDK
@@ -81,8 +82,24 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     compile 'com.google.android.gms:play-services-location:8.4.0'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
+
+
+    //SOCIAL SDK
+    compile files('libs/socialauth-4.4.jar')
+    compile files('libs/socialauth-android-3.2.jar')
+
+
+    //FABRIC SDK
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
+    /*
+    compile('com.twitter.sdk.android:twitter:1.13.0@aar') {
+        transitive = true;
+    }
+    compile('com.twitter.sdk.android:tweet-composer:1.0.3@aar') {
+        transitive = true;
+    }
+    */
 
 }

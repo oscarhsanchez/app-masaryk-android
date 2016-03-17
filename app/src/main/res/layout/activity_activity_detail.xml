@@ -18,7 +18,7 @@
         <ImageView
             android:id="@+id/img_gallery"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="180dp"
             android:background="#CCCCCC"
             android:scaleType="centerCrop"
             android:contentDescription="@string/desc" />
@@ -80,6 +80,7 @@
 
 
         <LinearLayout
+            android:id="@+id/ll_icons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -89,8 +90,6 @@
 
             <ImageButton
                 style="@style/bt_actions"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="1dp"
                 android:contentDescription="@string/desc"
                 android:onClick="clickWaze"
                 android:background="@drawable/bt_pink_left"
@@ -100,8 +99,17 @@
                 style="@style/bt_actions"
                 android:contentDescription="@string/desc"
                 android:onClick="clickMaps"
-                android:background="@drawable/bt_pink_right"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/bt_pink_middle"
                 android:src="@drawable/icon_map" />
+
+            <ImageButton
+                style="@style/bt_actions"
+                android:contentDescription="@string/desc"
+                android:onClick="clickShare"
+                android:background="@drawable/bt_pink_right"
+                android:src="@drawable/icon_share" />
 
             <LinearLayout
                 android:id="@+id/ll_activity_schedule"
@@ -146,14 +154,15 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/txt_status"
+            android:layout_width="100dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="#EEEEEE"
+            android:text="asdasd"/>
+
     </LinearLayout>
-
-
-    <fragment
-        android:id="@+id/map_view"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rl_container" />
 
 </RelativeLayout>

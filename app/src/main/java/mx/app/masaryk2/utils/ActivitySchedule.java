@@ -23,12 +23,13 @@ public class ActivitySchedule {
 
     static public void schedule(JSONObject item, Context context, ActivityScheduleListener listener) {
 
-        int eventID = 0;
+        int eventID = 0, status = 0;
         String title = "", date = "";
         Boolean payment = false;
 
         try {
             eventID = item.getInt("id");
+            status  = item.getInt("status");
             title   = item.getString("title");
             date    = item.getString("date_from");
             payment = item.getInt("type_id") == 2;
@@ -39,7 +40,7 @@ public class ActivitySchedule {
         if (exists(eventID)) {
             unregister(eventID, context, listener);
         } else {
-            register(eventID, title, date, payment, context, listener);
+            register(eventID, title, date, payment, status, context, listener);
         }
 
     }
@@ -48,10 +49,10 @@ public class ActivitySchedule {
         return ActivitySQL.exists(eventID);
     }
 
-    static void register(final int eventID, final String title, final String date, final Boolean payment, final Context context, final ActivityScheduleListener listener) {
+    static void register(final int eventID, final String title, final String date, final Boolean payment, final int status, final Context context, final ActivityScheduleListener listener) {
 
         String msg = "";
-        if (payment) {
+        if (payment && status != 3) {
             msg = "Esta actividad tiene costo. Si ya hiciste el pago ¿te gustaría agendarlo? En caso contrario también puedes pasar a la pasarela de pago.";
         } else {
             msg = "¿Quieres agregar este evento a tu calendario?";
@@ -83,7 +84,7 @@ public class ActivitySchedule {
                     }
                 });
 
-        if (payment) {
+        if (payment && status != 3) {
             builder.setNeutralButton("Pagar",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
